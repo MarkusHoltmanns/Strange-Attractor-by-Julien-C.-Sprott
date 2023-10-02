@@ -15,10 +15,14 @@ from textwrap import wrap
 
 
 
-char = "JJICKAFXIOXFVGOCIDNIVRPSFYPFGABXKKONQWPAMJGKAGXDBBWFHGXBTPNVD" # "EWM?MPMMWMMMM" #"EZPMSGCNFRENG" #"AXBH"
+char = "VMMKMRMREPCPYAFRGJBOTPHNQRFXVNSNYQVJNBXXPKRPVHFQAFGFSTHYFKCIDWXOQJAKRFKHPYHNENTDQLJMQGMXTFPBDFUIPAIODWYAMTXJDIWGERTHDOKWFXPLSWFYPXNQMNOBKILSG" # "VHETJPMKNMHQNUVBIOTFADJUXXIQRSGDSNXAGNEKPMCJRIDEHOFTVTPLWUFLNDCWLKHXKKELUMBDOHSIBSDEWWSPLQVMWLQERMCANDUBCXULQWYGOTLGLLQFSJGVQEUIEQQXXWGEKVTPA" # "UBLFBKKFNATJVTJUKJFGALBIPQHVRUMAROTNVHBLAQVSHVHRGLFJAAABFRJFW" # "JJICKAFXIOXFVGOCIDNIVRPSFYPFGABXKKONQWPAMJGKAGXDBBWFHGXBTPNVD" # "EWM?MPMMWMMMM" #"EZPMSGCNFRENG" #"AXBH"
 print(char)
 dimension = 0
 type_of_attractor = None
+torus = False # True
+if torus ==True:
+    print("Torus from a .", end='')
+    
 if char[0] == "A" or char[0] =="B" or char[0] =="C" or char[0] =="D":
     dimension = 1
     if char[0] == "A":
@@ -53,6 +57,46 @@ if char[0] == "I" or char[0] =="J" or char[0] =="K" or char[0] =="L":
     if char[0] == "L":
         type_of_attractor = "quintic"
     print("3D "+type_of_attractor+" map.")
+if char[0] == "M" or char[0] =="N" or char[0] =="O" or char[0] =="P":
+    dimension = 4
+    if char[0] == "M":
+        type_of_attractor = "quadratic"
+    if char[0] == "N":
+        type_of_attractor = "cubic"
+    if char[0] == "O":
+        type_of_attractor = "quartic"
+    if char[0] == "P":
+        type_of_attractor = "quintic"
+    print("4D "+type_of_attractor+" map.")
+if char[0] == "Q" or char[0] =="R" or char[0] =="S" or char[0] =="T":
+    dimension = 3
+    if char[0] == "Q":
+        type_of_attractor = "quadratic"
+    if char[0] == "R":
+        type_of_attractor = "cubic"
+    if char[0] == "S":
+        type_of_attractor = "quartic"
+    if char[0] == "T":
+        type_of_attractor = "quintic"
+    print("3D "+type_of_attractor+" ODE.")
+if char[0] == "U" or char[0] =="V" or char[0] =="W" or char[0] =="X":
+    dimension = 4
+    if char[0] == "U":
+        type_of_attractor = "quadratic ODE"
+    if char[0] == "V":
+        type_of_attractor = "cubic ODE"
+    if char[0] == "W":
+        type_of_attractor = "quartic ODE"
+    if char[0] == "X":
+        type_of_attractor = "quintic ODE"
+    print("4D "+type_of_attractor+".")
+if char[0] == "Y" or char[0] =="Z" or char[0] =="[":
+    dimension = 3
+    print("3D modulus map.")
+if char[0] =="\\"or char[0] =="]"or char[0] =="^":
+    dimension = 3
+    print("3D trigonometrical map.")
+
     
 stop = 1
 run = 0
@@ -61,15 +105,18 @@ while run < stop:
     x = random.uniform(-0.1,0.1)
     y = random.uniform(-0.1,0.1)
     z = random.uniform(-0.1,0.1)
-    variables = (x,y,z)
+    w = random.uniform(-0.1,0.1)
+    variables = (x,y,z,w)
     x_vals = []
     y_vals = []
     z_vals = []
+    w_vals = []
     i = 0
-    n = 100000
+    n = 50000
     n_temp = n
+    dt = 0.01
     while i < n_temp:
-        variables = functions.function(char,variables)
+        variables = functions.function(char,variables,dt)
         conditions = 0
         if dimension >= 1:
             x_vals.append( variables[0])
@@ -80,6 +127,9 @@ while run < stop:
         if dimension >= 3:
             z_vals.append( variables[2])
             conditions = conditions + z_vals[i]*z_vals[i]
+        if dimension >= 4:
+            w_vals.append( variables[3])
+            conditions = conditions + w_vals[i]*w_vals[i]
         #print(x_vals[i],y_vals[i],z_vals[i])
         
         i=i+1 
@@ -100,7 +150,7 @@ if dimension == 2:
     new_string = "SABOOK-Code: "+char
     plt.text(0, 1.75, s="\n".join(wrap(new_string)),fontsize=5, horizontalalignment="center")
   
-if dimension == 3:
+if dimension >= 3:
     fig = plt.figure(dpi = 250)
     ax = fig.add_subplot(1, 1, 1, projection='3d')
     ax.scatter(x_vals, y_vals, z_vals, s = 0.05, facecolors = 'blue', edgecolors = 'none')
