@@ -250,30 +250,84 @@ def function(char, oldvariables, epsilon):
         W = w + epsilon * W
         variables = (X,Y,Z,W)
 
-    """
+    
     # Y
-    X = a[1] + a[2]*x + a[3]*y + a[4]|X| + a[5]|Y|
-    Y = a[6] + a[7]*x + a[8]*y + a[9]|X| + a[10]|Y|
-    Z = *np.power(x,2) + *np.power(y,2)
+    if char[0] == "Y":
+        x = oldvariables[0]
+        y = oldvariables[1]
+        z = oldvariables[2]
+        X = a[1] + a[2]*x + a[3]*y + a[4]*np.abs(x) + a[5]*np.abs(y)
+        Y = a[6] + a[7]*x + a[8]*y + a[9]*np.abs(x) + a[10]*np.abs(y)
+        Z = np.power(x,2) + np.power(y,2)
+        variables = (X,Y,Z)
     # Z
-    X = a[1] + a[2]*x + a[3]*y + a[4]*x AND a[5]*y + a[6]*x OR a[7]*y
-    Y = a[8] + a[9]*x + a[10]*y + a[11]*x AND a[12]*y + a[13]*x OR a[14]*y
-    Z = *np.power(x,2) + *np.power(y,2)
+    if char[0] == "Z":
+        x = oldvariables[0]
+        y = oldvariables[1]
+        z = oldvariables[2]
+        aa = ( int(a[4]*x) &  int(a[5]*y))
+        if aa >= 1:
+            aa = 1
+        if aa < 1:
+            aa = 0
+        bb = ( int(a[6]*x) ^  int(a[7]*y))
+        if bb >= 1:
+            bb = 1
+        if bb < 1:
+            bb = 0
+        cc = (int(a[11]*x) & int(a[12]*y))
+        if cc >= 1:
+            cc = 1
+        if cc < 1:
+            cc = 0
+        dd = (int(a[13]*x) ^ int(a[14]*y))
+        if dd >= 1:
+            dd = 1
+        if dd < 1:
+            dd = 0
+        
+        X = a[1] + a[2]*x +  a[3]*y +  (1-aa)*a[4]*x +  aa*a[5]*y +  (1-bb)*a[6]*x +  bb*a[7]*y
+        Y = a[8] + a[9]*x + a[10]*y + (1-cc)*a[11]*x + cc*a[12]*y + (1-dd)*a[13]*x + dd*a[14]*y
+        Z = np.power(x,2) + np.power(y,2)
+        variables = (X,Y,Z)
     # [
-        X = a[1] + a[2]*x + a[3]*y + a[4]|X|a[5] + a[6]|Y|a[7]
-    Y = a[8] + a[9]*x + a[10]*y + a[11]|X|a[12 ]+ a[13]|Y|a[14]
-    Z = *np.power(x,2) + *np.power(y,2)
+    if char[0] == "[":
+        x = oldvariables[0]
+        y = oldvariables[1]
+        z = oldvariables[2]
+        X = a[1] + a[2]*x +  a[3]*y +  a[4]*np.power(np.abs(x),a[5]) +  a[6]*np.power(np.abs(y),a[7])
+        Y = a[8] + a[9]*x + a[10]*y + a[11]*np.power(np.abs(x),a[12])+ a[13]*np.power(np.abs(y),a[14])
+        Z = np.power(x,2) + np.power(y,2)
+        variables = (X,Y,Z)
     # \
-        X = a[1] + a[2]*x + a[3]*y + a[4]sin(a[5]*x + a[6) + a[7]sin(a[8]*y + a[9])
-    Y = a[10] + a[11]*x + a[12]*y + a[13]sin(a[14]*x + a[15) + a[16]sin(a[17]*y + a[18])
-    Z = *np.power(x,2) + *np.power(y,2)
+    if char[0] == "\\":
+        x = oldvariables[0]
+        y = oldvariables[1]
+        z = oldvariables[2]
+        X =  a[1] +  a[2]*x +  a[3]*y +  a[4]*np.sin( a[5]*x +  a[6]) +  a[7]*np.sin( a[8]*y +  a[9])
+        Y = a[10] + a[11]*x + a[12]*y + a[13]*np.sin(a[14]*x + a[15]) + a[16]*np.sin(a[17]*y + a[18])
+        Z = np.power(x,2) + np.power(y,2)
+        variables = (X,Y,Z)
     # ]
-    X = 10a[1] + [X + a[2sin(a[3]*y+a[4])]cos[2p/(13+10a[6])] + Y sin[2p/(13+10a[6])]
-    Y = 10a[5] - [X + a[2sin(a[3]*y + a[4])]sin[2p/(13+10a[6])] + Y cos[2p/(13+10a[6])]
-    Z = *np.power(x,2) + *np.power(y,2)
+    if char[0] == "]":
+        x = oldvariables[0]
+        y = oldvariables[1]
+        z = oldvariables[2]
+        X = 10*a[1] + (x + a[2]*np.sin(a[3]*y + a[4]))*np.cos(2*np.pi/(13+10*a[6])) + y*np.sin(2*np.pi/(13+10*a[6]))
+        Y = 10*a[5] - (x + a[2]*np.sin(a[3]*y + a[4]))*np.sin(2*np.pi/(13+10*a[6])) + y*np.cos(2*np.pi/(13+10*a[6]))
+        Z = np.power(x,2) + np.power(y,2)
+        variables = (X,Y,Z)
     # ^
-    X = X + 0.1a[1]*y
-    Y = Y + 0.1(a[2]*x + a[3]*np.power(x,3) + a[4]*np.power(x,2)*y + a[5]*x*np.power(y,2) + a[6]*y + a[7]*np.power(y,3) + a[8]sin Z
-    Z = [Z + 0.1(a[9] + 1.3)] mod 2p
-    """
+    if char[0] == "^":
+        x = oldvariables[0]
+        y = oldvariables[1]
+        z = oldvariables[2]
+        X = a[1]*y
+        Y = a[2]*x + a[3]*np.power(x,3) + a[4]*np.power(x,2)*y + a[5]*x*np.power(y,2) + a[6]*y + a[7]*np.power(y,3) + a[8]*np.sin(z)
+        Z = math.fmod(z + epsilon*(a[9] + 1.3), 2*np.pi)
+        X = x + epsilon * X
+        Y = y + epsilon * Y
+        Z = z + epsilon * Z
+        variables = (X,Y,Z)
+    
     return variables

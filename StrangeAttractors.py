@@ -13,13 +13,14 @@ import functions
 import random
 from textwrap import wrap
 
+ 
 
-
-char = "VMMKMRMREPCPYAFRGJBOTPHNQRFXVNSNYQVJNBXXPKRPVHFQAFGFSTHYFKCIDWXOQJAKRFKHPYHNENTDQLJMQGMXTFPBDFUIPAIODWYAMTXJDIWGERTHDOKWFXPLSWFYPXNQMNOBKILSG" # "VHETJPMKNMHQNUVBIOTFADJUXXIQRSGDSNXAGNEKPMCJRIDEHOFTVTPLWUFLNDCWLKHXKKELUMBDOHSIBSDEWWSPLQVMWLQERMCANDUBCXULQWYGOTLGLLQFSJGVQEUIEQQXXWGEKVTPA" # "UBLFBKKFNATJVTJUKJFGALBIPQHVRUMAROTNVHBLAQVSHVHRGLFJAAABFRJFW" # "JJICKAFXIOXFVGOCIDNIVRPSFYPFGABXKKONQWPAMJGKAGXDBBWFHGXBTPNVD" # "EWM?MPMMWMMMM" #"EZPMSGCNFRENG" #"AXBH"
+char = "EAHSVIGTJKOTB" # "^VRDSNKGRT" # "]YDUCBE" #"]SBSMKG" #"]PHXUEG" # "VMMKMRMREPCPYAFRGJBOTPHNQRFXVNSNYQVJNBXXPKRPVHFQAFGFSTHYFKCIDWXOQJAKRFKHPYHNENTDQLJMQGMXTFPBDFUIPAIODWYAMTXJDIWGERTHDOKWFXPLSWFYPXNQMNOBKILSG" # "VHETJPMKNMHQNUVBIOTFADJUXXIQRSGDSNXAGNEKPMCJRIDEHOFTVTPLWUFLNDCWLKHXKKELUMBDOHSIBSDEWWSPLQVMWLQERMCANDUBCXULQWYGOTLGLLQFSJGVQEUIEQQXXWGEKVTPA" # "UBLFBKKFNATJVTJUKJFGALBIPQHVRUMAROTNVHBLAQVSHVHRGLFJAAABFRJFW" # "JJICKAFXIOXFVGOCIDNIVRPSFYPFGABXKKONQWPAMJGKAGXDBBWFHGXBTPNVD" # "EWM?MPMMWMMMM" #"EZPMSGCNFRENG" #"AXBH"
 print(char)
 dimension = 0
 type_of_attractor = None
 torus = False # True
+planet = True
 if torus ==True:
     print("Torus from a .", end='')
     
@@ -92,9 +93,11 @@ if char[0] == "U" or char[0] =="V" or char[0] =="W" or char[0] =="X":
     print("4D "+type_of_attractor+".")
 if char[0] == "Y" or char[0] =="Z" or char[0] =="[":
     dimension = 3
+    type_of_attractor = "modulus"
     print("3D modulus map.")
 if char[0] =="\\"or char[0] =="]"or char[0] =="^":
     dimension = 3
+    type_of_attractor = "trigonometrical"
     print("3D trigonometrical map.")
 
     
@@ -102,25 +105,41 @@ stop = 1
 run = 0
 while run < stop:
     print ("run = ", run)
-    x = random.uniform(-0.1,0.1)
-    y = random.uniform(-0.1,0.1)
-    z = random.uniform(-0.1,0.1)
-    w = random.uniform(-0.1,0.1)
+    x = random.uniform(-1.,1.)
+    y = random.uniform(-1.,1.)
+    z = random.uniform(-1.,1.)
+    w = random.uniform(-1.,1.)
+    if stop > 500:
+        x = random.uniform(-0.1,0.1)
+        y = random.uniform(-0.1,0.1)
+        z = random.uniform(-0.1,0.1)
+        w = random.uniform(-0.1,0.1)
+        if stop > 2000:
+            x = random.uniform(-0.01,0.01)
+            y = random.uniform(-0.01,0.01)
+            z = random.uniform(-0.01,0.01)
+            w = random.uniform(-0.01,0.01)
+        if stop > 5000:
+            x = random.uniform(-0.001,0.001)
+            y = random.uniform(-0.001,0.001)
+            z = random.uniform(-0.001,0.001)
+            w = random.uniform(-0.001,0.001)
     variables = (x,y,z,w)
     x_vals = []
     y_vals = []
     z_vals = []
     w_vals = []
     i = 0
-    n = 50000
+    n = 100000
     n_temp = n
     dt = 0.01
+    variables = functions.function(char,variables,dt)
     while i < n_temp:
         variables = functions.function(char,variables,dt)
-        conditions = 0
+        conditions = 0.
         if dimension >= 1:
             x_vals.append( variables[0])
-            conditions = x_vals[i]*x_vals[i]
+            conditions = x_vals[i] * x_vals[i]
         if dimension >= 2:
             y_vals.append( variables[1])
             conditions = conditions + y_vals[i]*y_vals[i]
@@ -130,10 +149,11 @@ while run < stop:
         if dimension >= 4:
             w_vals.append( variables[3])
             conditions = conditions + w_vals[i]*w_vals[i]
-        #print(x_vals[i],y_vals[i],z_vals[i])
+        #print(x_vals[i],y_vals[i],z_vals[i])   
+            
         
         i=i+1 
-        if conditions > 100:
+        if conditions > 1.e+100 and stop < 100000: # 1.8e+308
             print("conditions wasn't met because absolute value of conditions = ", conditions)
             n_temp = i
             stop = stop + 1
@@ -142,28 +162,30 @@ while run < stop:
 filename_sub = None
 if dimension == 2:
     plt.subplots(dpi = 250)
-    plt.scatter(x_vals, y_vals, s = 0.05, facecolors = 'blue', edgecolors = 'none')
+    plt.scatter(x_vals, y_vals, s = 0.1, facecolors = 'blue', edgecolors = 'none')
     plt.xlabel("X Axis", fontsize=8)
     plt.ylabel("Y Axis", fontsize=8)
-    filename_sub = "2D-"+type_of_attractor+"-attractor-"+char+")"
+    filename_sub = "2D-"+type_of_attractor+"-attractor-"+char
     plt.title("2D-"+type_of_attractor+" attractor: (x$_{0}$,y$_{0}$)=(%f" %x + ",%f" %y + ")")
     new_string = "SABOOK-Code: "+char
-    plt.text(0, 1.75, s="\n".join(wrap(new_string)),fontsize=5, horizontalalignment="center")
+    xmin, xmax, ymin, ymax = plt.axis()
+    print(xmin, xmax, ymin, ymax)
+    plt.text(xmin+(xmax-xmin)/2, ymin+(ymax-ymin)*1.11, s="\n".join(wrap(new_string)),fontsize=5, horizontalalignment="center")
   
 if dimension >= 3:
     fig = plt.figure(dpi = 250)
     ax = fig.add_subplot(1, 1, 1, projection='3d')
-    ax.scatter(x_vals, y_vals, z_vals, s = 0.05, facecolors = 'blue', edgecolors = 'none')
+    ax.scatter(x_vals, y_vals, z_vals, s = 0.1, facecolors = 'blue', edgecolors = 'none')
     ax.set_xlabel("X Axis", fontsize=8)
     ax.set_ylabel("Y Axis", fontsize=8)
     ax.set_zlabel("Z Axis", fontsize=8)
-    filename_sub = "3D-"+type_of_attractor+"-attractor-"+char+")"
+    filename_sub = "3D-"+type_of_attractor+"-attractor-"+char
     ax.set_title("3D-"+type_of_attractor+" attractor: (x$_{0}$,y$_{0}$,z$_{0}$)=(%f" %x + ",%f" %y + ",%f" %z +")")
     new_string = "SABOOK-Code: "+char
     fig.text(0.5, 0.94, s="\n".join(wrap(new_string)),fontsize=5, horizontalalignment="center")
 
-plt.axis('square')
-plt.axis('scaled')
+#plt.axis('square')
+#plt.axis('scaled')
 
 bad_chars = [';', ':', '!', "?", "*", " ", "*", "\\", "/", "|", "<", ">"]
 for i in bad_chars:
